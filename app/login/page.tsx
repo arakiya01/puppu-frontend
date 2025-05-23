@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/context/userContext";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const { refreshUser } = useUser();
 
   const handleLogin = async () => {
     const { error } = await supabase.auth.signInWithPassword({
@@ -18,7 +20,8 @@ export default function LoginPage() {
     if (error) {
       alert("ログイン失敗: " + error.message);
     } else {
-      router.push("/dashboard"); // 遷移先を好きな画面に
+      await refreshUser();
+      router.push("/home");
     }
   };
 

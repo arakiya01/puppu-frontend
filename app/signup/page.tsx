@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
-import { apiFetch } from "@/lib/api";
+import { apiClient } from "@/lib/api";
+import { Post } from "../dto/post";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -21,11 +22,7 @@ export default function SignupPage() {
       return;
     }
 
-    const res = await apiFetch(
-      "/users",
-      { method: "POST", body: JSON.stringify({ name: name }) },
-      data.session?.access_token
-    );
+    const res = await apiClient.post("/users", JSON.stringify({ name: name }));
 
     router.push("/home");
   };
