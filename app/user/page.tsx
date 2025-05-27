@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useUser } from "@/context/userContext";
 import { useRouter } from "next/navigation";
-import LoginModalButton from "@/components/loginModalButton";
+import LoginModalButton from "@/components/LoginModalButton";
+import SignUpModalButton from "@/components/SignupModalButton";
 
 export default function UserName() {
   const { user, refreshUser } = useUser();
@@ -33,14 +34,6 @@ export default function UserName() {
     router.push("/home");
   };
 
-  // Enterキーでログイン
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "Enter") {
-      handleLogin();
-    }
-  };
-
-  // click outside で閉じる
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (formRef.current && !formRef.current.contains(e.target as Node)) {
@@ -70,7 +63,10 @@ export default function UserName() {
           </button>
         </div>
       ) : (
-        <LoginModalButton />
+        <>
+          <SignUpModalButton />
+          <LoginModalButton />
+        </>
       )}
     </div>
   );

@@ -6,17 +6,20 @@ import { useEffect, useState } from "react";
 import { User } from "./dto/user";
 import { apiClient } from "@/lib/api";
 import UserName from "./user/page";
-import InitApiRedirect from "@/components/initApiRedirect";
+import InitApiRedirect from "@/components/InitApiRedirect";
 import { UserProvider } from "@/context/userContext";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    apiClient
-      .get<User>("/users/me")
-      .then(setUser)
-      .catch(() => setUser(null));
+    const loadUser = async () => {
+      await apiClient
+        .get<User>("/users/me")
+        .then(setUser)
+        .catch(() => setUser(null));
+    };
+    loadUser();
   }, []);
 
   return (

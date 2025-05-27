@@ -22,7 +22,7 @@ export default function SignupPage() {
       return;
     }
 
-    const res = await apiClient.post("/users", JSON.stringify({ name: name }));
+    await apiClient.post("/users", JSON.stringify({ name: name }));
 
     router.push("/home");
   };

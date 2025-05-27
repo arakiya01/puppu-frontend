@@ -2,23 +2,26 @@
 
 import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { apiClient } from "@/lib/api";
 
-export default function LoginModalButton() {
+export default function SignUpModalButton() {
   const [showModal, setShowModal] = useState(false);
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  const handleLogin = async () => {
+  const handleSignup = async () => {
     setIsLoading(true);
     await new Promise((res) => setTimeout(res, 500));
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setIsLoading(false);
+    const { error } = await supabase.auth.signUp({ email, password });
     if (error) {
-      alert("ログイン失敗: " + error.message);
+      alert("登録失敗: " + error.message);
       return;
     }
+    await apiClient.post("/users", JSON.stringify({ name: username }));
+    setIsLoading(false);
     setShowModal(false);
     location.reload();
   };
@@ -44,6 +47,14 @@ export default function LoginModalButton() {
           <div ref={modalRef} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-96">
             <input
               className="w-full mb-3 p-2 text-sm border rounded bg-gray-100 dark:bg-gray-700 text-black dark:text-white"
+              type="username"
+              placeholder="ユーザー名"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+
+            <input
+              className="w-full mb-3 p-2 text-sm border rounded bg-gray-100 dark:bg-gray-700 text-black dark:text-white"
               type="email"
               placeholder="メールアドレス"
               value={email}
@@ -56,17 +67,17 @@ export default function LoginModalButton() {
               placeholder="パスワード"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+              onKeyDown={(e) => e.key === "Enter" && handleSignup()}
             />
 
             <button
-              onClick={handleLogin}
+              onClick={handleSignup}
               disabled={isLoading}
               className={`w-full px-3 py-2 text-sm text-white rounded ${
                 isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
               }`}
             >
-              {isLoading ? "読み込み中..." : "ログイン"}
+              {isLoading ? "読み込み中..." : "登録"}
             </button>
           </div>
         </div>
@@ -79,10 +90,10 @@ export default function LoginModalButton() {
           {isLoading ? (
             <>
               <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-              ログイン中...
+              登録中...
             </>
           ) : (
-            "ログイン"
+            "新規登録"
           )}
         </button>
       )}
